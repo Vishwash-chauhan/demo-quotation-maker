@@ -1,0 +1,302 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1600
+      ],
+      "id": "5fa06533-9c06-4964-ae59-90848c7066ca",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "REDACTED"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        1600
+      ],
+      "id": "ae715464-4eec-4a9f-adb4-70807bf979a3",
+      "name": "Code in Python (Beta)1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1821011887,
+          "mode": "list",
+          "cachedResultName": "Customer Details",
+          "cachedResultUrl": "REDACTED"
+        },
+        "options": {}
+      },
+      "id": "07365247-c61a-443b-8129-7fda8e5a2c16",
+      "name": "Customer Details1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        176,
+        1312
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "REDACTED"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 749274658,
+          "mode": "list",
+          "cachedResultName": "Other Services",
+          "cachedResultUrl": "REDACTED"
+        },
+        "options": {}
+      },
+      "id": "0f88150e-834b-4512-877c-b5c874fbf25a",
+      "name": "Other Services1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        176,
+        1696
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "REDACTED"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1344407936,
+          "mode": "list",
+          "cachedResultName": "Other Info",
+          "cachedResultUrl": "REDACTED"
+        },
+        "options": {}
+      },
+      "id": "9a424885-8ee8-4cc5-be71-a623da3daf4d",
+      "name": "Other Info1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        176,
+        1888
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "REDACTED"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 289692086,
+          "mode": "list",
+          "cachedResultName": "Proposed Menu",
+          "cachedResultUrl": "REDACTED"
+        },
+        "options": {}
+      },
+      "id": "3289174f-94ce-4d69-a656-efa229b6f155",
+      "name": "Proposed Menu1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        176,
+        1504
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "REDACTED"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        400,
+        1568
+      ],
+      "id": "57b77d41-6bc3-4553-abab-69b02f01be1a",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "resource": "html-to-pdf",
+        "html": "={{ $json.html_content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-pdforge.pdforge",
+      "typeVersion": 1,
+      "position": [
+        848,
+        1600
+      ],
+      "id": "89b801e9-b7b7-4cdf-be1a-3697868bf024",
+      "name": "HTML To PDF",
+      "credentials": {
+        "pdforgeApi": {
+          "id": "REDACTED",
+          "name": "REDACTED"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          [
+            {
+              "node": "Customer Details1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Proposed Menu1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Other Services1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Other Info1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      ]
+    },
+    "Code in Python (Beta)1": {
+      "main": [
+        [
+          [
+            {
+              "node": "HTML To PDF",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      ]
+    },
+    "Customer Details1": {
+      "main": [
+        [
+          [
+            {
+              "node": "Merge3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      ]
+    },
+    "Other Services1": {
+      "main": [
+        [
+          [
+            {
+              "node": "Merge3",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      ]
+    },
+    "Other Info1": {
+      "main": [
+        [
+          [
+            {
+              "node": "Merge3",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      ]
+    },
+    "Proposed Menu1": {
+      "main": [
+        [
+          [
+            {
+              "node": "Merge3",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          [
+            {
+              "node": "Code in Python (Beta)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED",
+    "sanitized": true,
+    "sanitizedNote": "Credential ids and names replaced with 'REDACTED'"
+  }
+}

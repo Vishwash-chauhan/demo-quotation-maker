@@ -1,0 +1,27 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Node / Python
+node_modules/
+venv/
+.env
+.env.local
+
+# n8n / workflow secrets / local config
+.n8n/
+secrets.*
+*.secret
+workflow.json
+
+# Outputs
+*.pdf
+*.html
+
+# Editors
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Logs
+*.log
