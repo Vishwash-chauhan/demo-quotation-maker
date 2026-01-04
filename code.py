@@ -203,10 +203,10 @@ for item in menu_items:
     cat = d.get('Category','Other')
     categories.setdefault(cat, []).append(d)
 
-# Generate a table per category (preserves first-seen category order)
+# Generate a separate table per category (preserves first-seen category order)
 for cat, items in categories.items():
     html += f"""
-        <table class="data-table" style="margin:20px 0;">
+        <table class="data-table" style="margin-top: 20px; margin-bottom: 0; page-break-inside: avoid;">
           <colgroup>
             <col style="width:45%" />
             <col style="width:15%" />
@@ -215,13 +215,12 @@ for cat, items in categories.items():
             <col style="width:15%" />
           </colgroup>
           <thead>
-            <tr><th colspan="5" style="background:#F6B27A; padding:8px; text-align:left; font-size:16px;">{cat.upper()}</th></tr>
-            <tr>
-              <th style="width:45%">Item Details</th>
-              <th style="width:15%">PORTIONS</th>
-              <th style="width:10%;" class="col-right">RATE</th>
-              <th style="width:15%;" class="col-right">AMOUNT</th>
-              <th style="width:15%;" class="col-right">PCS</th>
+            <tr style="page-break-inside: avoid;">
+              <th style="width:45%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: left; font-size: 14px; font-weight: bold; border: 1px solid #999;">{cat.upper()}</th>
+              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PORTIONS</th>
+              <th style="width:10%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">RATE</th>
+              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">AMOUNT</th>
+              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PCS.</th>
             </tr>
           </thead>
           <tbody>
@@ -237,25 +236,25 @@ for cat, items in categories.items():
             rate_display = f"₹{int(r_val):,}" if r_val.is_integer() else f"₹{r_val:,.2f}"
         except Exception:
             rate_display = rate_raw
-        # Format Amount
-        amt_raw = d.get('Amount','')
+            r_val = 0
+        # Calculate Amount: Amount = Rate × Pcs
         try:
-            a_str = str(amt_raw).replace(',','').strip()
-            a_val = float(a_str)
-            amount_display = f"₹{int(a_val):,}" if a_val.is_integer() else f"₹{a_val:,.2f}"
+            pcs_val = float(str(pcs).replace(',','').strip()) if pcs else 0
+            a_val = r_val * pcs_val if r_val and pcs_val else 0
+            amount_display = f"₹{int(a_val):,}" if a_val == int(a_val) else f"₹{a_val:,.2f}"
         except Exception:
-            amount_display = amt_raw
+            amount_display = ""
 
         html += f"""
-            <tr>
+            <tr style="page-break-inside: avoid;">
               <td>
                 <strong>{d.get('Name','')}</strong> <span class='badge'>{d.get('Veg/Non Veg','')}</span>
                 <span class='description'>{d.get('Description','')}</span>
               </td>
-              <td>{portions}</td>
-              <td class='col-right'>{rate_display}</td>
-              <td class='col-right'>{amount_display}</td>
-              <td class='col-right'>{pcs}</td>
+              <td style="text-align: center;">{portions}</td>
+              <td style="text-align: center;">{rate_display}</td>
+              <td style="text-align: center;">{amount_display}</td>
+              <td style="text-align: center;">{pcs}</td>
             </tr>"""
     html += """
           </tbody>
