@@ -23,7 +23,7 @@ html = f"""
 
   @page {{
     /* Margin: Top, Right, Bottom, Left. */
-    margin: 10mm 15mm 15mm 15mm; 
+    margin: 10mm 15mm 3mm 15mm; 
   }}
   
   body {{ 
@@ -93,7 +93,7 @@ html = f"""
   
   .footer-line {{
     border-top: 1px solid #ccc;
-    margin: 0 15mm 10px 15mm;
+    margin: 0 15mm 5mm 15mm;
   }}
 
   .header-banner {{ 
@@ -208,15 +208,17 @@ for cat, items in categories.items():
     html += f"""
         <table class="data-table" style="margin-top: 20px; margin-bottom: 0; page-break-inside: avoid;">
           <colgroup>
-            <col style="width:40%" />
-            <col style="width:20%" />
+            <col style="width:30%" />
+            <col style="width:15%" />
+            <col style="width:15%" />
             <col style="width:20%" />
             <col style="width:20%" />
           </colgroup>
           <thead>
             <tr style="page-break-inside: avoid;">
-              <th style="width:40%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: left; font-size: 14px; font-weight: bold; border: 1px solid #999;">{cat.upper()}</th>
-              <th style="width:20%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PORTION</th>
+              <th style="width:30%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: left; font-size: 14px; font-weight: bold; border: 1px solid #999;">{cat.upper()}</th>
+              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PCS</th>
+              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PORTION</th>
               <th style="width:20%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">RATE</th>
               <th style="width:20%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">AMOUNT</th>
             </tr>
@@ -249,6 +251,7 @@ for cat, items in categories.items():
                 <strong>{d.get('Name','')}</strong> <span class='badge'>{d.get('Veg/Non Veg','')}</span>
                 <span class='description'>{d.get('Description','')}</span>
               </td>
+              <td style="text-align: center;">{d.get('PcsDisplay','')}</td>
               <td style="text-align: center;">{portions}</td>
               <td style="text-align: center;">{rate_display}</td>
               <td style="text-align: center;">{amount_display}</td>

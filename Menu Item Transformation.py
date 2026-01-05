@@ -11,6 +11,7 @@ for item in items_list:
         "Name": item.get("Name"),
         "Description": item.get("Description"),
         "Portion": item.get("Portions", ""),  # Get from Portions field (updated from form)
+        "PcsDisplay": item.get("PcsDisplay", ""),
         "Rate": item.get("Rate"),
         "Category": item.get("Category", ""),
         "Veg/Non Veg": item.get("VegNonVeg", ""),
