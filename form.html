@@ -748,7 +748,7 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
   const url = webhookEl.value.trim();
   if (!url){ alert('Please set the n8n Webhook URL'); return }
   const payload = collectPayload();
-  document.getElementById('status').textContent = 'Sending...';
+  document.getElementById('status').textContent = 'Generating quotation PDF...';
   
   // Check if running on localhost (for mock testing)
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -766,13 +766,14 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
         return r.json();
       })
       .then(data=>{
-        document.getElementById('status').textContent = 'Submitted successfully.';
-        // Extract PDF URL from n8n response
-        const pdfUrl = data.pdfUrl || data.pdf_url || data.url || '';
+        // Extract PDF URL from n8n response - check signedUrl from HTML To PDF node
+        const pdfUrl = data.signedUrl || data.pdfUrl || data.pdf_url || data.url || '';
         if (pdfUrl) {
+          document.getElementById('status').textContent = 'Quotation ready!';
           showPdfModal(pdfUrl);
         } else {
-          document.getElementById('status').textContent = 'Submitted, but no PDF URL received.';
+          document.getElementById('status').textContent = 'Submitted, but no PDF URL received. Check n8n response.';
+          console.log('Full response:', data);
         }
       })
       .catch(err=>{ document.getElementById('status').textContent = 'Submit failed: '+err.message })
