@@ -16,7 +16,6 @@ workflow.json
 
 # Outputs
 *.pdf
-*.html
 
 # Editors
 .vscode/

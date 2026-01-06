@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Little Jalabies Quotation Maker</title>
+  <style>
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;padding:20px;color:#222;background:#f8f9fa}
+    .container{max-width:900px;margin:0 auto;background:white;padding:24px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+    h1{font-size:28px;margin:0 0 8px 0;color:#1a3a3a;font-weight:700}
+    h1 small{display:block;font-size:14px;color:#666;font-weight:400;margin-top:4px}
+    h3{font-size:16px;margin:20px 0 12px 0;color:#2D3E50;font-weight:600;border-bottom:2px solid #f0f0f0;padding-bottom:8px}
+    p.muted{color:#777;font-size:13px;margin:8px 0 16px 0}
+    label{display:block;margin-top:10px;font-weight:600;color:#333}
+    input,select{padding:10px;border:1px solid #ddd;border-radius:6px;width:100%;box-sizing:border-box;font-size:14px}
+    input:focus,select:focus{outline:none;border-color:#2D3E50;box-shadow:0 0 0 3px rgba(45,62,80,0.1)}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .search{margin-top:10px;padding:10px;border:1px solid #ddd;border-radius:6px;width:100%;}
+    .search:focus{outline:none;border-color:#2D3E50;box-shadow:0 0 0 3px rgba(45,62,80,0.1)}
+    .menu-list{max-height:360px;overflow:auto;border:1px solid #e6e6e6;padding:8px;margin-top:8px;border-radius:6px}
+    .category{margin-bottom:12px;border-bottom:1px solid #f0f0f0;padding-bottom:8px}
+    .category-header{font-weight:700;padding:8px 6px;background:#fbfbfb;border-radius:4px;margin-bottom:6px;border:1px solid #f3f3f3}
+    .menu-item{display:flex;align-items:center;gap:12px;padding:8px;border-bottom:1px solid #fafafa}
+    .menu-item:last-child{border-bottom:none}
+    .menu-item .meta{flex:1}
+    .menu-item .right{width:140px;text-align:right;color:#333}
+    .menu-item label{margin:0;cursor:pointer}
+    .menu-item input[type=checkbox]{width:18px;height:18px;cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:16px;border:1px solid #ddd}
+    th,td{border:1px solid #ddd;padding:12px;text-align:left}
+    th{background:#f7f7f7;font-weight:600;color:#333}
+    .col-right{text-align:right}
+    .total-row{background:#f9f9f9;font-weight:600}
+    .total{font-weight:700;text-align:right;margin-top:10px}
+    .small{font-size:12px;color:#666}
+    button{padding:12px 20px;border-radius:6px;border:0;background:#2D3E50;color:white;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s}
+    button:hover{background:#1a2535;box-shadow:0 2px 6px rgba(0,0,0,0.15)}
+    button:active{transform:scale(0.98)}
+    .muted{color:#777;font-size:13px}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    footer{margin-top:20px;font-size:12px;color:#666}
+    .dashed-box{margin-top:24px; padding: 16px; border: 2px dashed #ccc; border-radius: 6px; background: #f9f9f9;}
+    .dashed-box h3{margin-top:0;border:none;padding:0;color:#2D3E50}
+    a{color:#2D3E50;text-decoration:none}
+    a:hover{text-decoration:underline}
+    /* PDF Modal Popup */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.show {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    }
+    .modal-content h2 {
+      color: #2D3E50;
+      margin-top: 0;
+      font-size: 24px;
+    }
+    .modal-content p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 16px 0;
+    }
+    .pdf-link-box {
+      background: #f5f5f5;
+      border: 2px solid #F6B27A;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+      word-break: break-all;
+    }
+    .pdf-link-box a {
+      color: #2D3E50;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      justify-content: center;
+    }
+    .modal-buttons button {
+      flex: 1;
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+    .modal-buttons button.secondary {
+      background: #666;
+    }
+    .modal-buttons button.secondary:hover {
+      background: #444;
+    }
+    .modal-buttons button.primary {
+      background: #2D3E50;
+    }
+    .modal-buttons button.primary:hover {
+      background: #1a2535;
+    }
+    @media(max-width:768px){
+      body{padding:12px}
+      .container{padding:16px;border-radius:6px}
+      h1{font-size:22px}
+      h1 small{font-size:12px}
+      h3{font-size:14px;margin:16px 0 10px 0}
+      .form-grid{grid-template-columns:1fr}
+      table{font-size:13px;margin-top:12px}
+      th,td{padding:8px}
+      button{padding:10px 16px;font-size:13px;width:100%;margin-bottom:8px}
+      input,select{padding:8px;font-size:13px}
+      .menu-item .right{width:100px;font-size:12px}
+      .menu-item{gap:8px}
+      label{margin-top:8px}
+      .small{font-size:11px}
+      .muted{font-size:12px}
+    }
+    @media(max-width:480px){
+      body{padding:8px}
+      .container{padding:12px;border-radius:4px}
+      h1{font-size:18px}
+      h1 small{font-size:11px}
+      h3{font-size:13px;margin:12px 0 8px 0;padding-bottom:6px}
+      table{font-size:12px}
+      th,td{padding:6px;font-size:11px}
+      button{padding:10px 12px;font-size:12px}
+      input,select{padding:8px;font-size:12px}
+      .form-grid{gap:8px}
+      .col-right{font-size:12px}
+      .menu-item .right{width:80px;font-size:11px}
+      p.muted{font-size:11px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Little Jalabies Quotation Maker
+    </h1>
+
+  <div>
+    <div class="form-grid">
+      <div>
+        <label>Event Date</label>
+        <input id="eventDate" type="date" />
+      </div>
+      <div>
+        <label>Host Name</label>
+        <input id="hostName" type="text"/>
+      </div>
+      <div>
+        <label>Mobile No</label>
+        <input id="mobile" type="tel" placeholder="" />
+      </div>
+      <div>
+        <label>Time</label>
+        <input id="time" type="time" />
+      </div>
+      <div>
+        <label>Pax</label>
+        <input id="pax" type="text" placeholder="10 Kids 5 Adults" />
+      </div>
+      <div>
+        <label>Location</label>
+        <input id="location" type="text"/>
+      </div>
+    </div>
+
+    <label style="margin-top:18px"></label>
+    <input id="webhookUrl" type="hidden" value="https://n8n.vyaapaarniti.com/webhook/quotation-form" />
+    <input type="hidden" id="quoteId" value="" />
+    <input type="hidden" name="x-webhook-token" id="webhookToken" value="a-string-secret-at-least-256-bits-long" />
+    <p class="muted" style="margin-top:8px;"></p>
+
+    <label style="margin-top:16px">Search & select menu items</label>
+    <input id="search" class="search" placeholder="Search menu..." />
+    <div id="menuList" class="menu-list">Loading menu…</div>
+
+    <h3 style="margin-top:18px">Selected Items</h3>
+    <div id="tableWrap">
+      <table id="selectedTable">
+        <thead>
+          <tr><th>Item Details</th><th style="width:100px">Pcs</th><th style="width:80px">Portions</th><th style="width:90px" class="col-right">Rate</th><th style="width:100px" class="col-right">Amount</th><th style="width:60px">Action</th></tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" style="text-align: right; font-weight: bold;">Total:</td>
+            <td style="text-align: right; font-weight: bold;"><span id="totalAmount">₹0</span></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div style="margin-top:24px; padding: 16px; border: 2px dashed #ccc; border-radius: 6px; background: #f9f9f9;">
+      <h3 style="margin-top: 0; border: none; padding: 0;">Add Custom Item</h3>
+      <div class="form-grid">
+        <div>
+          <label>Item Name</label>
+          <input id="customName" type="text" placeholder="e.g., Special Biryani" />
+        </div>
+        <div>
+          <label>Description</label>
+          <input id="customDesc" type="text" placeholder="Item description" />
+        </div>
+        <div>
+          <label>Category</label>
+          <select id="customCategory" style="padding:8px;border:1px solid #ccc;border-radius:6px;width:100%;box-sizing:border-box">
+            <option value="">— Select Category —</option>
+            <option value="Table Snacks">Table Snacks</option>
+            <option value="Main Course">Main Course</option>
+            <option value="Rice">Rice</option>
+            <option value="Noodles">Noodles</option>
+            <option value="Dessert">Dessert</option>
+          </select>
+        </div>
+        <div>
+          <label>Veg / Non-Veg</label>
+          <select id="customVegNonVeg" style="padding:8px;border:1px solid #ccc;border-radius:6px;width:100%;box-sizing:border-box">
+            <option value="">— Select —</option>
+            <option value="Veg">Veg</option>
+            <option value="Non-Veg">Non-Veg</option>
+          </select>
+        </div>
+        <div>
+          <label>Pcs.</label>
+          <input id="customPcs" type="text" placeholder="e.g., 1 KG, 6 PCS" />
+        </div>
+        <div>
+          <label>Portions</label>
+          <input id="customPortions" type="number" min="0" value="0" />
+        </div>
+        <div>
+          <label>Rate per Portion</label>
+          <input id="customRate" type="number" min="0" step="0.01" placeholder="₹0" />
+        </div>
+        <div style="display: flex; align-items: flex-end;">
+          <button id="addCustomItemBtn" style="width: 100%; margin: 0;">+ Add Item</button>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px">Other Services</h3>
+    <div class="form-grid">
+      <div>
+        <label>Chef + Servers + Helper</label>
+        <input id="chefServers" type="text" placeholder="₹4,000" />
+      </div>
+      <div>
+        <label>Table Décor (As Per Theme)</label>
+        <input id="tableDecor" type="text" value="Included" />
+      </div>
+      <div>
+        <label>Cutlery & Crockery</label>
+        <input id="cutlery" type="text" placeholder="₹100" />
+      </div>
+      <div>
+        <label>Chaffing Dishes & Snack Warmers</label>
+        <input id="chaffing" type="text" placeholder="₹100" />
+      </div>
+      <div>
+        <label>Conveyance</label>
+        <input id="conveyance" type="text" value="As Per Actual" />
+      </div>
+    </div>
+
+    <h3 style="margin-top:24px">Summary & Total</h3>
+    <table class="data-table">
+      <tbody>
+        <tr><td colspan="2">Subtotal (Items)</td><td class="col-right" id="subtotalItems">₹0</td></tr>
+        <tr><td colspan="2">Chef + Servers + Helper</td><td class="col-right" id="summaryChef">—</td></tr>
+        <tr><td colspan="2">Table Décor (As Per Theme)</td><td class="col-right" id="summaryDecor">—</td></tr>
+        <tr><td colspan="2">Cutlery & Crockery</td><td class="col-right" id="summaryCutlery">—</td></tr>
+        <tr><td colspan="2">Chaffing Dishes & Snack Warmers</td><td class="col-right" id="summaryChaffing">—</td></tr>
+        <tr><td colspan="2">Conveyance</td><td class="col-right" id="summaryConveyance">—</td></tr>
+        <tr class="total-row"><td colspan="2">Subtotal (With Services)</td><td class="col-right" id="subtotalWithServices">₹0</td></tr>
+        <tr class="total-row"><td colspan="2">GST 5%</td><td class="col-right" id="gstAmount">₹0</td></tr>
+        <tr class="total-row"><td colspan="2">TOTAL AMOUNT</td><td class="col-right" id="finalTotal">₹0</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:24px">To Be Provided By Host</h3>
+    <div class="form-grid">
+      <div>
+        <label>Tables with covers for the food display</label>
+        <input id="tables" type="text" value="As Required" />
+      </div>
+      <div>
+        <label>Kitchen Space & Table to be provided</label>
+        <input id="kitchenSpace" type="text" value="As Required" />
+      </div>
+    </div>
+
+    <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+      <button id="submitBtn" style="background-color: green; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Submit</button>
+      <div class="muted"><a href="#" id="downloadBtn"></a></div>
+    </div>
+  </div>
+    </div>
+
+    <div id="status" class="small" style="margin-top:12px"></div>
+  </div>
+
+  <!-- PDF Modal Popup -->
+  <div id="pdfModal" class="modal">
+    <div class="modal-content">
+      <h2>✓ Quotation Generated!</h2>
+      <p>Your quotation has been successfully created. Download or view it using the link below:</p>
+      <div class="pdf-link-box">
+        <a id="pdfLink" href="#" target="_blank" rel="noopener noreferrer">Click here to download PDF</a>
+      </div>
+      <div class="modal-buttons">
+        <button class="primary" onclick="openPdfInNewTab()">View PDF</button>
+        <button class="secondary" onclick="closePdfModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* Configuration */
+const SHEET_ID = '1dQijjlam6sm3GxNXfTZoyMi2yzZl41pAe96Ygvjm_vI';
+const SHEET_NAME = 'Master Menu';
+const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+
+let menuItems = []; // {Name,Description,Rate,...}
+const menuListEl = document.getElementById('menuList');
+const searchEl = document.getElementById('search');
+const selectedTableBody = document.querySelector('#selectedTable tbody');
+const totalAmountEl = document.getElementById('totalAmount');
+const webhookEl = document.getElementById('webhookUrl');
+const hostNameEl = document.getElementById('hostName');
+const quoteIdEl = document.getElementById('quoteId');
+
+// Generate unique Quote ID counter from localStorage
+function getNextQuoteCounter(hostName) {
+  const key = `quoteCounter_${hostName}`;
+  let count = localStorage.getItem(key);
+  count = (parseInt(count) || 0) + 1;
+  localStorage.setItem(key, count);
+  return String(count).padStart(3, '0');
+}
+
+function generateQuoteId() {
+  const hostName = hostNameEl.value.trim();
+  if (!hostName) {
+    quoteIdEl.value = '';
+    return;
+  }
+  const counter = getNextQuoteCounter(hostName);
+  quoteIdEl.value = `${hostName}${counter}`;
+}
+
+// Update Quote ID when host name changes
+hostNameEl.addEventListener('change', generateQuoteId);
+hostNameEl.addEventListener('blur', generateQuoteId);
+
+function formatCurrency(v){
+  if (isNaN(v)) return v;
+  const n = Number(v);
+  return '₹' + (Number.isInteger(n) ? n.toLocaleString() : n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}));
+}
+
+function fetchSheet(){
+  // Hardcoded menu items for offline/testing when the sheet is not public
+menuItems = [
+    // TABLE SNACKS - VEG
+    {Name: "Magical Fairy Fries", Description: "Classic Salted Crinkle Cut Fries, sprinkled with magic for an enchanting mealtime.", PcsDisplay: "100 GMS", Rate: 99, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Peri Peri Space Fries", Description: "Blast off on a flavor adventure with our Peri Peri Crinkle Cut Fries.", PcsDisplay: "100 GMS", Rate: 119, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Popcorn Party Pops", Description: "Poppin' fun at its best! Regular Popcorn, the ultimate party snack.", PcsDisplay: "100 GMS", Rate: 99, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Whimsical Potato Wedges", Description: "Potato wedges shaped like magic wands.", PcsDisplay: "", Rate: 189, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Surprise Potato Balls", Description: "Surprise Potato balls are filled with yummy potato making them a hit with little adventurers.", PcsDisplay: "10 PCS", Rate: 139, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Veggie Garden Finger Bites", Description: "Crispy, colorful, and nutritious veggie fingers that make eating vegetables a treat.", PcsDisplay: "6 PCS", Rate: 159, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Sunshine Cheese Corn Nuggets", Description: "Golden nuggets filled with cheese and sweet corn, crisp on the outside and soft inside.", PcsDisplay: "6 PCS", Rate: 179, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Mini Batata Vada", Description: "Bite-sized potato vadas with a touch of spice and a whole lot of comfort.", PcsDisplay: "6 PCS", Rate: 189, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Veg Snacker Burgers", Description: "Delicious veggie patty with a cheesy spread and our secret sauce on a soft bun.", PcsDisplay: "2 PCS", Rate: 159, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Veg Dim-Sum Delights", Description: "Steamed, juicy vegetable dim sums wrapped in delicate dough.", PcsDisplay: "6 PCS", Rate: 329, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Rings of Onion", Description: "Crispy, deep-fried treats coated with a seasoned batter.", PcsDisplay: "6 PCS", Rate: 189, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Cheese Delight Balls", Description: "Tiny meteorites of cheesy goodness that kids will love.", PcsDisplay: "6 PCS", Rate: 189, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Mini Veg Sandwich Delights", Description: "Bite-sized sandwiches with a burst of freshness.", PcsDisplay: "4 PCS", Rate: 189, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Mini Paneer Tikka Rolls", Description: "Paneer popsicles on a roll, just the right size for kiddie hands.", PcsDisplay: "3 PCS", Rate: 299, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Green Hero Kebabs", Description: "Our Hara bhara kebabs are packed with veggies and flavors.", PcsDisplay: "6 PCS", Rate: 299, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Pocket Cheese Jalepeno Balls", Description: "Packed with cheese and a spicy kick for flavor-loving kids.", PcsDisplay: "6 PCS", Rate: 229, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Yummy Chilli Paneer (Dry)", Description: "Cheesy planet pals taste adventure (Dry).", PcsDisplay: "6 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Mini Pizzas", Description: "Savory delight specially crafted for young taste buds.", PcsDisplay: "2 PCS", Rate: 119, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Nachos Adventure", Description: "Crunchy nachos served with zesty salsa and dip.", PcsDisplay: "100 GMS", Rate: 199, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Tomato Bruschetta Bites", Description: "Sundried Tomato Bruschetta 'aliens'.", PcsDisplay: "6 PCS", Rate: 299, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Mushroom Magic Bruschetta", Description: "Savory mushrooms atop crisp toast.", PcsDisplay: "6 PCS", Rate: 299, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Rollercoaster Veg Spring Rolls", Description: "Crispy rolls packed with stir-fried veggies.", PcsDisplay: "6 PCS", Rate: 329, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Crispy Salt n Pepper Corn", Description: "Golden corn kernels tossed with salt, pepper, and mild spices.", PcsDisplay: "", Rate: 329, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Honey Chilli Potato", Description: "Tangy, sweet, and spicy golden potato fingers.", PcsDisplay: "", Rate: 329, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Paneer Tikka Magic", Description: "Marinated paneer pieces for a culinary journey.", PcsDisplay: "6 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Mini Veg Tacos", Description: "A tiny fiesta in your hands.", PcsDisplay: "3 PCS", Rate: 359, Category: "Table Snacks", VegNonVeg: "Veg"},
+    {Name: "Cheesy Corn Spring Roll Twirls", Description: "Golden crispy rolls filled with cheesy corn joy.", PcsDisplay: "6 PCS", Rate: 459, Category: "Table Snacks", VegNonVeg: "Veg"},
+
+    // TABLE SNACKS - NON-VEG
+    {Name: "Starship Chicken Nuggets", Description: "Star-shaped nuggets for flavorful space rides.", PcsDisplay: "6 PCS", Rate: 189, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Zippy Burgers", Description: "Chicken patty with a cheesy spread and our secret sauce on a soft bun.", PcsDisplay: "2 PCS", Rate: 199, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Mini Chicken Delight Sandwiches", Description: "Tiny and delicious, perfect for little munchers.", PcsDisplay: "4 PCS", Rate: 229, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Popcorn Crunchies", Description: "Each bite is a delightful burst of flavor.", PcsDisplay: "10 PCS", Rate: 249, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Mini Chicken Mayo Roll-ers", Description: "Rocket-like rolls that are delicious and creamy.", PcsDisplay: "3 PCS", Rate: 299, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Lollipop Galaxy", Description: "Tasty and fun space treats for space explorers.", PcsDisplay: "3 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Wings of Wonder", Description: "Tantalizing flavors for food adventurers.", PcsDisplay: "6 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Crispy Chicken Adventure Strips", Description: "A galaxy of crunch that kids will adore.", PcsDisplay: "6 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Springtime Rolls", Description: "Flavorful chicken rolls for tiny hands.", PcsDisplay: "6 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Dim-Sum Delights", Description: "Steamed, juicy chicken dim sums wrapped in delicate dough.", PcsDisplay: "6 PCS", Rate: 349, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Mini Chicken Tacos", Description: "Mini delights filled with chicken goodness.", PcsDisplay: "3 PCS", Rate: 399, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Rocket Chicken Seekh Kebabs", Description: "Tasty and fun rockets of flavor.", PcsDisplay: "4 PCS", Rate: 399, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Zesty Chilli Chicken Crunch (Dry)", Description: "Spicy and succulent chicken bursts.", PcsDisplay: "8-10 PCS", Rate: 449, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+    {Name: "Fin-Tastic Fish Fingers", Description: "Crispy fish treats for adventurous eaters.", PcsDisplay: "6 PCS", Rate: 489, Category: "Table Snacks", VegNonVeg: "Non-Veg"},
+
+    // MAIN COURSE - VEG
+    {Name: "Extravaganza Masala Maggi", Description: "A masala adventure with flavorful and spicy noodles.", PcsDisplay: "", Rate: 149, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Peri Peri Magic Maggi", Description: "Noodles with a kick to spice up the meal.", PcsDisplay: "", Rate: 149, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Cheese Bliss Maggi", Description: "Yummy and cheesy noodle delight.", PcsDisplay: "", Rate: 189, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Mac 'n' Cheesy Spaceships", Description: "Creamy spaceships of cheesy goodness.", PcsDisplay: "", Rate: 299, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Veggie Marvel Manchurian", Description: "Soft veggie balls in a flavorful soy-based sauce.", PcsDisplay: "", Rate: 369, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Idli Delights", Description: "Mini Idlis with Sambhar & Chutney.", PcsDisplay: "", Rate: 379, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Playtime Bombay Pav Bhaji", Description: "A planet of flavorful, lip-smacking flavors.", PcsDisplay: "", Rate: 379, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Royal Rajma with Steamed Rice", Description: "Kidney beans in rich tomato gravy with steamed rice.", PcsDisplay: "", Rate: 399, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Tangy Chilli Paneer (Gravy)", Description: "Paneer cubes in spicy and tangy gravy with bell peppers.", PcsDisplay: "", Rate: 399, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Channa Celestial", Description: "Chickpeas in aromatic gravy with wheat kulchas.", PcsDisplay: "", Rate: 399, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Creamy Alfredo Pasta", Description: "Velvety white sauce whole-wheat pasta with a hint of garlic.", PcsDisplay: "", Rate: 449, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Planet Penne Delight", Description: "Whole wheat penne in flavorful red sauce with herbs.", PcsDisplay: "", Rate: 449, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Pink Sauce Fusion Penne", Description: "Balanced creamy, tangy, and savory mix sauce whole-wheat pasta.", PcsDisplay: "", Rate: 449, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Dal Makhani Marvel", Description: "Served with Malabari Paranthas or Wheat Kulchas.", PcsDisplay: "", Rate: 469, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Paneer Star Makhani", Description: "Soft paneer in rich tomato-based gravy with Paranthas/Kulchas.", PcsDisplay: "", Rate: 469, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Kadhai Paneer Delight", Description: "Served with Malabari Paranthas or Wheat Kulchas.", PcsDisplay: "", Rate: 469, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Stir Fried Vegetables", Description: "Veggies in Butter Garlic/Hot Garlic Sauce.", PcsDisplay: "", Rate: 499, Category: "Main Course", VegNonVeg: "Veg"},
+    {Name: "Thai Curry (Veg)", Description: "Green/Red/Yellow Thai Curry with Jasmine Rice.", PcsDisplay: "", Rate: 659, Category: "Main Course", VegNonVeg: "Veg"},
+
+    // MAIN COURSE - NON-VEG
+    {Name: "Dynamite Chicken Chili (Gravy)", Description: "Succulent chicken pieces in a thick, savory gravy.", PcsDisplay: "", Rate: 499, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Sizzling Chicken Manchurian", Description: "Juicy chicken balls in a zesty soy-garlic sauce.", PcsDisplay: "", Rate: 499, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Savory Shredded Chicken", Description: "Tossed in Butter Garlic/Hot Garlic Sauce.", PcsDisplay: "", Rate: 599, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Butter Chicken Bliss", Description: "Mild and creamy tomato-based gravy with Paranthas/Kulchas.", PcsDisplay: "", Rate: 599, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Kadhai Chicken Universe", Description: "A burst of yumminess perfect for tiny taste buds with Paranthas/Kulchas.", PcsDisplay: "", Rate: 599, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Keema Comet", Description: "Flavorful chicken keema served with soft Bombay pav.", PcsDisplay: "", Rate: 599, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Curry Magic", Description: "Mild, kid-friendly curry with Paranthas/Kulchas.", PcsDisplay: "", Rate: 599, Category: "Main Course", VegNonVeg: "Non-Veg"},
+    {Name: "Thai Curry (Non-Veg)", Description: "Green/Red/Yellow Thai Curry with Jasmine Rice.", PcsDisplay: "", Rate: 699, Category: "Main Course", VegNonVeg: "Non-Veg"},
+
+    // RICE & NOODLES
+    {Name: "Steamed Bliss Rice", Description: "Soft, warm, and perfectly prepared steamed rice.", PcsDisplay: "", Rate: 119, Category: "Rice", VegNonVeg: "Veg"},
+    {Name: "Cumin Fusion Rice", Description: "Fragrance fused with cumin for a savory taste.", PcsDisplay: "", Rate: 159, Category: "Rice", VegNonVeg: "Veg"},
+    {Name: "Veggie Fiesta Fried Rice", Description: "A colorful bounce of fresh vegetables and fried rice.", PcsDisplay: "", Rate: 299, Category: "Rice", VegNonVeg: "Veg"},
+    {Name: "Veggie Galaxy Pulao", Description: "A light rice dish filled with colorful veggies.", PcsDisplay: "", Rate: 349, Category: "Rice", VegNonVeg: "Veg"},
+    {Name: "Vegetable Temptation Biryani", Description: "Aromatic rice and veggies served with Raita.", PcsDisplay: "", Rate: 449, Category: "Rice", VegNonVeg: "Veg"},
+    {Name: "Eggs-cursion Fried Rice", Description: "Embark on a tasty adventure with egg-citing fried rice.", PcsDisplay: "", Rate: 349, Category: "Rice", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Sizzle Fried Rice", Description: "Sizzling dance of chicken and rice.", PcsDisplay: "", Rate: 399, Category: "Rice", VegNonVeg: "Non-Veg"},
+    {Name: "Original Chicken Biryani", Description: "Aromatic rice with succulent chicken and Raita.", PcsDisplay: "", Rate: 499, Category: "Rice", VegNonVeg: "Non-Veg"},
+    {Name: "Vibrant Hakka Noodles", Description: "Colorful noodles for a flavor-packed experience.", PcsDisplay: "", Rate: 299, Category: "Noodles", VegNonVeg: "Veg"},
+    {Name: "Wiggly Chilli Garlic Noodles", Description: "Thin noodles with a hint of garlic.", PcsDisplay: "", Rate: 289, Category: "Noodles", VegNonVeg: "Veg"},
+    {Name: "Eggy Zigzag Noodles", Description: "Deliciously tangled world of egg-filled noodles.", PcsDisplay: "", Rate: 329, Category: "Noodles", VegNonVeg: "Non-Veg"},
+    {Name: "Chicken Haaka Comet Noodles", Description: "Vibrant noodles with a splash of flavor.", PcsDisplay: "", Rate: 399, Category: "Noodles", VegNonVeg: "Non-Veg"},
+
+    // DESSERTS & DRINKS
+    {Name: "Desi Ghee Gulab Jamun", Description: "Traditional sweet treats; soft and melt-in-the-mouth.", PcsDisplay: "1 PC", Rate: 49, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Fluffy Rasgulla Clouds", Description: "Soft, spongy, and sugar-syrup-soaked treats.", PcsDisplay: "1 PC", Rate: 39, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Ice Cream", Description: "Choice of Vanilla, Chocolate, Strawberry, or Butterscotch.", PcsDisplay: "", Rate: 59, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Magical Brownie Planet", Description: "Moist eggless brownie, perfect for chocolate lovers.", PcsDisplay: "1 PC", Rate: 59, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Ice Cream with Brownies", Description: "Vanilla ice cream with moist eggless brownie goodness.", PcsDisplay: "", Rate: 79, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Kool Kulfi", Description: "Traditional rich and creamy frozen kulfi.", PcsDisplay: "1 PC", Rate: 89, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Decadent Choco Lava Delight", Description: "Warm dessert with a gooey chocolate center.", PcsDisplay: "1 PC", Rate: 99, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Chocolate Mousse Cup", Description: "Light and airy chocolate mousse.", PcsDisplay: "1 PC", Rate: 99, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Chocolate Donuts", Description: "Delightfully soft chocolate donuts.", PcsDisplay: "1 PC", Rate: 99, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Little Jalebis With Rabri", Description: "Traditional jalebis paired with creamy rabri.", PcsDisplay: "", Rate: 229, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Gajar Halwa", Description: "Rich dessert made with grated carrots and milk.", PcsDisplay: "250 GMS", Rate: 299, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Hot Chocolate Fondue", Description: "Marshmallows with hot chocolate fondue.", PcsDisplay: "25-30 PCS", Rate: 1999, Category: "Dessert", VegNonVeg: "Veg"},
+    {Name: "Fresh Lemonade", Description: "Refreshing blend of lemons and sweetness.", PcsDisplay: "200 ml", Rate: 39, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Lemon Ice Tea", Description: "Refreshing tea infused with citrus goodness.", PcsDisplay: "200 ml", Rate: 49, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Hot Tea", Description: "Perfectly brewed hot tea.", PcsDisplay: "200 ml", Rate: 49, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Blue Curacao", Description: "A sweet and vibrant tropical sensation.", PcsDisplay: "200 ml", Rate: 79, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Hot Coffee", Description: "Steaming cup of rich, aromatic coffee.", PcsDisplay: "200 ml", Rate: 79, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Hot Chocolate", Description: "Warm, sweet drink made with rich cocoa.", PcsDisplay: "200 ml", Rate: 89, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Classic Tomato Soup", Description: "Comforting cup of velvety tomato goodness.", PcsDisplay: "200 ml", Rate: 89, Category: "Drinks", VegNonVeg: "Veg"},
+    {Name: "Smoothies", Description: "Choice of Vanilla, Chocolate, or Strawberry.", PcsDisplay: "200 ml", Rate: 99, Category: "Drinks", VegNonVeg: "Veg"}
+];
+  renderMenu(menuItems);
+}
+
+function renderMenu(items){
+  menuListEl.innerHTML = '';
+  // group items by Category and render a structured list
+  const groups = {};
+  items.forEach((m, idx)=>{
+    const cat = m.Category || 'Other';
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push({ item: m, idx });
+  });
+
+  Object.keys(groups).forEach(cat => {
+    const container = document.createElement('div'); container.className = 'category';
+    const header = document.createElement('div'); header.className = 'category-header'; header.textContent = cat;
+    container.appendChild(header);
+
+    groups[cat].forEach(({ item, idx }) => {
+      const el = document.createElement('div'); el.className = 'menu-item';
+      const cb = document.createElement('input'); cb.type='checkbox'; cb.id = 'm_'+idx; cb.dataset.idx = idx;
+      const meta = document.createElement('div'); meta.className = 'meta'; meta.innerHTML = `<strong>${item.Name||'Unnamed'}</strong>`;
+      const right = document.createElement('div'); right.className = 'right';
+      right.innerHTML = `${item.PcsDisplay ? '<div class="small">'+item.PcsDisplay+'</div>' : ''}<div>${item.Rate?formatCurrency(item.Rate):''}</div>`;
+
+      el.appendChild(cb); el.appendChild(meta); el.appendChild(right);
+      container.appendChild(el);
+
+      cb.addEventListener('change', (e)=>{
+        if (e.target.checked) addItemToTable(item, idx);
+        else removeItemFromTable(idx);
+      });
+    });
+
+    menuListEl.appendChild(container);
+  });
+}
+
+searchEl.addEventListener('input', ()=>{
+  const q = searchEl.value.trim().toLowerCase();
+  const nodes = menuListEl.querySelectorAll('.menu-item');
+  nodes.forEach((n, i)=>{
+    const txt = n.querySelector('.meta').textContent.toLowerCase();
+    n.style.display = txt.indexOf(q) === -1 ? 'none' : 'flex';
+  })
+  // hide empty categories
+  const cats = menuListEl.querySelectorAll('.category');
+  cats.forEach(cat => {
+    const visible = cat.querySelectorAll('.menu-item').length && cat.querySelectorAll('.menu-item[style*="display: none"]').length !== cat.querySelectorAll('.menu-item').length;
+    cat.style.display = visible ? 'block' : 'none';
+  });
+})
+
+function addItemToTable(item, idx){
+  // prevent duplicates
+  if (selectedTableBody.querySelector('[data-idx="'+idx+'"]')) return;
+  const tr = document.createElement('tr');
+  tr.dataset.idx = idx;
+  const rate = Number(item['Rate']||0);
+  const pcsDisplay = item['PcsDisplay'] || '';
+  tr.innerHTML = `<td><strong>${item['Name']}</strong></td>
+    <td><input class="pcsDisplay" type="text" value="${pcsDisplay}" style="width:80px;padding:6px;border:1px solid #ccc;border-radius:6px" placeholder="e.g., 100 GMS" /></td>
+    <td><input class="portions" type="number" min="0" value="1" style="width:60px;padding:6px;border:1px solid #ccc;border-radius:6px" /></td>
+    <td class="col-right">${formatCurrency(rate)}</td>
+    <td class="col-right amount">${formatCurrency(rate)}</td>`;
+  tr.dataset.rate = rate;
+  tr.dataset.category = item.Category || 'Other';
+  tr.dataset.vegNonVeg = item.VegNonVeg || '';
+  tr.dataset.description = item.Description || '';
+  selectedTableBody.appendChild(tr);
+  const portionsInput = tr.querySelector('.portions');
+  portionsInput.addEventListener('input', ()=>updateRowAmount(tr));
+  updateRowAmount(tr);
+}
+
+function removeItemFromTable(idx){
+  const row = selectedTableBody.querySelector('[data-idx="'+idx+'"]');
+  if (row) row.remove(); updateTotal();
+}
+
+function addCustomItem(){
+  const name = document.getElementById('customName').value.trim();
+  const desc = document.getElementById('customDesc').value.trim();
+  const category = document.getElementById('customCategory').value.trim();
+  const vegNonVeg = document.getElementById('customVegNonVeg').value.trim();
+  const pcs = document.getElementById('customPcs').value.trim();
+  const portions = Number(document.getElementById('customPortions').value) || 0;
+  const rate = Number(document.getElementById('customRate').value) || 0;
+
+  // Allow adding items even with empty/default values - all fields are optional
+
+  // Create table row with delete button
+  const tr = document.createElement('tr');
+  tr.dataset.isCustom = 'true';
+  tr.innerHTML = `<td><strong>${name}</strong></td>
+    <td><input class="pcsDisplay" type="text" value="${pcs}" style="width:80px;padding:6px;border:1px solid #ccc;border-radius:6px" placeholder="e.g., 100 GMS" /></td>
+    <td><input class="portions" type="number" min="0" value="${portions}" style="width:60px;padding:6px;border:1px solid #ccc;border-radius:6px" /></td>
+    <td class="col-right">${formatCurrency(rate)}</td>
+    <td class="col-right amount">${formatCurrency(portions * rate)}</td>
+    <td><button class="deleteBtn" style="padding:4px 8px;font-size:12px;background:#d32f2f;width:100%">Delete</button></td>`;
+  
+  tr.dataset.description = desc;
+  tr.dataset.rate = rate;
+  tr.dataset.category = category || '';
+  tr.dataset.vegNonVeg = vegNonVeg || '';
+  selectedTableBody.appendChild(tr);
+
+  // Add event listeners
+  tr.querySelector('.portions').addEventListener('input', ()=>updateCustomRowAmount(tr));
+  tr.querySelector('.deleteBtn').addEventListener('click', ()=>{
+    tr.remove();
+    updateTotal();
+  });
+
+  // Clear form
+  document.getElementById('customName').value = '';
+  document.getElementById('customDesc').value = '';
+  document.getElementById('customCategory').value = '';
+  document.getElementById('customVegNonVeg').value = '';
+  document.getElementById('customPcs').value = '';
+  document.getElementById('customPortions').value = '1';
+  document.getElementById('customRate').value = '';
+
+  updateTotal();
+}
+
+function updateCustomRowAmount(tr){
+  const portions = Number(tr.querySelector('.portions').value) || 0;
+  const rate = Number(tr.dataset.rate) || 0;
+  const amt = portions * rate;
+  tr.querySelector('.amount').textContent = formatCurrency(amt);
+  updateTotal();
+}
+
+function updateRowAmount(tr){
+  const portions = Number(tr.querySelector('.portions').value) || 0;
+  const rate = Number(tr.dataset.rate) || 0;
+  const amt = portions * rate;
+  tr.querySelector('.amount').textContent = formatCurrency(amt);
+  updateTotal();
+}
+
+function extractNumber(val) {
+  if (!val) return 0;
+  const str = String(val).trim();
+  // Try to extract numeric value, ignore text like "Included", "As Per Actual"
+  const match = str.match(/[\d.,]+/);
+  if (!match) return 0;
+  // Remove commas and convert to number
+  return Number(match[0].replace(/,/g, '')) || 0;
+}
+
+function updateSummary() {
+  // Get subtotal from items
+  let itemsSubtotal = 0;
+  selectedTableBody.querySelectorAll('tr').forEach(tr=>{
+    const a = tr.querySelector('.amount').textContent.replace(/[^0-9.-]+/g,'');
+    itemsSubtotal += Number(a) || 0;
+  });
+
+  // Get service charges (extract numbers, handle text gracefully)
+  const chefVal = extractNumber(document.getElementById('chefServers').value);
+  const decorVal = extractNumber(document.getElementById('tableDecor').value);
+  const cutleryVal = extractNumber(document.getElementById('cutlery').value);
+  const chaffingVal = extractNumber(document.getElementById('chaffing').value);
+  const conveyanceVal = extractNumber(document.getElementById('conveyance').value);
+
+  // Update display values
+  document.getElementById('subtotalItems').textContent = formatCurrency(itemsSubtotal);
+  document.getElementById('summaryChef').textContent = chefVal > 0 ? formatCurrency(chefVal) : (document.getElementById('chefServers').value || '—');
+  document.getElementById('summaryDecor').textContent = decorVal > 0 ? formatCurrency(decorVal) : (document.getElementById('tableDecor').value || '—');
+  document.getElementById('summaryCutlery').textContent = cutleryVal > 0 ? formatCurrency(cutleryVal) : (document.getElementById('cutlery').value || '—');
+  document.getElementById('summaryChaffing').textContent = chaffingVal > 0 ? formatCurrency(chaffingVal) : (document.getElementById('chaffing').value || '—');
+  document.getElementById('summaryConveyance').textContent = conveyanceVal > 0 ? formatCurrency(conveyanceVal) : (document.getElementById('conveyance').value || '—');
+
+  // Calculate subtotal with services
+  const subtotalWithServices = itemsSubtotal + chefVal + decorVal + cutleryVal + chaffingVal + conveyanceVal;
+  document.getElementById('subtotalWithServices').textContent = formatCurrency(subtotalWithServices);
+
+  // Calculate GST 5%
+  const gst = subtotalWithServices * 0.05;
+  document.getElementById('gstAmount').textContent = formatCurrency(gst);
+
+  // Calculate final total
+  const finalTotal = subtotalWithServices + gst;
+  document.getElementById('finalTotal').textContent = formatCurrency(finalTotal);
+}
+
+function updateTotal(){
+  let total = 0;
+  selectedTableBody.querySelectorAll('tr').forEach(tr=>{
+    const a = tr.querySelector('.amount').textContent.replace(/[^0-9.-]+/g,'');
+    total += Number(a) || 0;
+  });
+  totalAmountEl.textContent = formatCurrency(total);
+  updateSummary(); // Also update the summary table
+}
+
+function collectPayload(){
+  const items = [];
+  selectedTableBody.querySelectorAll('tr').forEach(tr=>{
+    const name = tr.querySelector('td strong').textContent;
+    const desc = tr.dataset.description || '';
+    const portions = Number(tr.querySelector('.portions').value) || 0;
+    const pcsDisplay = tr.querySelector('.pcsDisplay').value || '';
+    const rate = Number(tr.dataset.rate) || 0;
+    const category = tr.dataset.category || 'Other';
+    const vegNonVeg = tr.dataset.vegNonVeg || '';
+    items.push({ Name: name, Description: desc, Category: category, VegNonVeg: vegNonVeg, Portions: portions, PcsDisplay: pcsDisplay, Rate: rate, Amount: portions*rate });
+  });
+
+  // Format date as dd/mm/yyyy
+  const dateInput = document.getElementById('eventDate').value;
+  let dateFormatted = '';
+  if (dateInput) {
+    const [yyyy, mm, dd] = dateInput.split('-');
+    dateFormatted = `${dd}/${mm}/${yyyy}`;
+  }
+
+  // Format time as 12-hour AM/PM
+  const timeInput = document.getElementById('time').value;
+  let timeFormatted = '';
+  if (timeInput) {
+    const [hours, minutes] = timeInput.split(':');
+    const h = parseInt(hours);
+    const m = parseInt(minutes);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    timeFormatted = `${String(h12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
+  }
+
+  const payload = {
+    EventDate: dateFormatted,
+    HostName: document.getElementById('hostName').value,
+    QuotationId: document.getElementById('quoteId').value,
+    MobileNo: document.getElementById('mobile').value,
+    Time: timeFormatted,
+    Pax: document.getElementById('pax').value,
+    Location: document.getElementById('location').value,
+    Items: items,
+    Total: items.reduce((s,i)=>s+i.Amount,0),
+    ChefServers: document.getElementById('chefServers').value,
+    TableDecor: document.getElementById('tableDecor').value,
+    Cutlery: document.getElementById('cutlery').value,
+    Chaffing: document.getElementById('chaffing').value,
+    Conveyance: document.getElementById('conveyance').value,
+    Tables: document.getElementById('tables').value,
+    KitchenSpace: document.getElementById('kitchenSpace').value
+  };
+  return payload;
+}
+
+document.getElementById('submitBtn').addEventListener('click', ()=>{
+  const url = webhookEl.value.trim();
+  if (!url){ alert('Please set the n8n Webhook URL'); return }
+  const payload = collectPayload();
+  document.getElementById('status').textContent = 'Sending...';
+  
+  // Check if running on localhost (for mock testing)
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
+  if (isLocalhost) {
+    // Mock response for localhost testing
+    const mockPdfUrl = `https://example.com/quotations/${payload.QuotationId || 'quotation'}_${Date.now()}.pdf`;
+    document.getElementById('status').textContent = 'Submitted successfully (Mock).';
+    showPdfModal(mockPdfUrl);
+  } else {
+    // Real n8n webhook call for production
+    fetch(url, { method:'POST', headers:{'Content-Type':'application/json', 'x-webhook-token': document.getElementById('webhookToken').value }, body: JSON.stringify(payload) })
+      .then(r=>{
+        if(!r.ok) throw new Error('Network response was not ok');
+        return r.json();
+      })
+      .then(data=>{
+        document.getElementById('status').textContent = 'Submitted successfully.';
+        // Extract PDF URL from n8n response
+        const pdfUrl = data.pdfUrl || data.pdf_url || data.url || '';
+        if (pdfUrl) {
+          showPdfModal(pdfUrl);
+        } else {
+          document.getElementById('status').textContent = 'Submitted, but no PDF URL received.';
+        }
+      })
+      .catch(err=>{ document.getElementById('status').textContent = 'Submit failed: '+err.message })
+  }
+});
+
+// download JSON
+document.getElementById('downloadBtn').addEventListener('click', (e)=>{
+  e.preventDefault();
+  const data = collectPayload();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'quotation.json'; a.click(); URL.revokeObjectURL(url);
+});
+
+// Initialize
+document.getElementById('addCustomItemBtn').addEventListener('click', addCustomItem);
+fetchSheet();
+// Add listeners to service fields for real-time summary update
+document.getElementById('chefServers').addEventListener('input', updateSummary);
+document.getElementById('tableDecor').addEventListener('input', updateSummary);
+document.getElementById('cutlery').addEventListener('input', updateSummary);
+document.getElementById('chaffing').addEventListener('input', updateSummary);
+document.getElementById('conveyance').addEventListener('input', updateSummary);
+// Initial summary calculation
+updateSummary();
+
+// Modal Functions
+function showPdfModal(pdfUrl) {
+  const pdfLink = document.getElementById('pdfLink');
+  pdfLink.href = pdfUrl;
+  document.getElementById('pdfModal').classList.add('show');
+}
+
+function closePdfModal() {
+  document.getElementById('pdfModal').classList.remove('show');
+}
+
+function openPdfInNewTab() {
+  const pdfUrl = document.getElementById('pdfLink').href;
+  window.open(pdfUrl, '_blank');
+}
+
+// Close modal when clicking outside of it
+window.addEventListener('click', (event) => {
+  const modal = document.getElementById('pdfModal');
+  if (event.target === modal) {
+    closePdfModal();
+  }
+});
+</script>
+</body>
+</html>
