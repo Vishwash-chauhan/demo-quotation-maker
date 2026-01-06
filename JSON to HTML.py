@@ -23,7 +23,7 @@ html = f"""
 
   @page {{
     /* Margin: Top, Right, Bottom, Left. */
-    margin: 10mm 15mm 3mm 15mm; 
+    margin: 10mm 15mm 20mm 15mm; 
   }}
   
   body {{ 
@@ -31,6 +31,25 @@ html = f"""
     color: #333; 
     line-height: 1.4;
     margin: 0;
+    background: white;
+  }}
+
+  @media print {{
+    body {{
+      background: white;
+      color: #333;
+    }}
+    h1, h2, h3 {{
+      color: #2D3E50 !important;
+    }}
+    .header-banner {{
+      background: #2D3E50 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }}
+    .header-details div {{
+      color: white !important;
+    }}
   }}
 
   h1, h2, h3 {{ 
@@ -93,7 +112,7 @@ html = f"""
   
   .footer-line {{
     border-top: 1px solid #ccc;
-    margin: 0 15mm 5mm 15mm;
+    margin: 0 15mm 0mm 15mm;
   }}
 
   .header-banner {{ 
@@ -102,17 +121,30 @@ html = f"""
     padding: 20px 25px;
     border-radius: 8px;
     margin-bottom: 15px;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }}
   .header-banner h1 {{ margin: 0; font-size: 26px; text-align: center; color: white !important; }}
   
   .header-details {{ 
     margin-top: 15px; 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 10px; 
+    display: table;
+    width: 100%;
     font-size: 13px; 
     border-top: 1px solid rgba(255,255,255,0.3);
     padding-top: 10px;
+  }}
+
+  .header-detail-row {{
+    display: table-row;
+  }}
+
+  .header-detail-row div {{
+    display: table-cell;
+    width: 50%;
+    padding: 5px 0;
+    color: white;
   }}
   
   h2 {{ border-bottom: 2px solid #2D3E50; padding-bottom: 5px; font-size: 18px; text-transform: uppercase; }}
@@ -128,12 +160,12 @@ html = f"""
   .data-table th {{ background: #f8f9fa; padding: 10px; text-align: left; border: 1px solid #999; font-size: 12px; }}
   .data-table td {{ padding: 10px; border: 1px solid #ccc; vertical-align: top; font-size: 13px; word-wrap: break-word; }}
   
-  tr {{ page-break-inside: avoid !important; }}
+  tr {{ page-break-inside: avoid; }}
   
   .col-right {{ text-align: right; }}
   .total-row {{ font-weight: bold; background-color: #f8f9fa; color: #2D3E50; }}
   .description {{ font-size: 11px; color: #666; font-style: italic; display: block; }}
-  .badge {{ font-size: 9px; padding: 1px 5px; border-radius: 3px; background: #ddd; font-weight: bold; }}
+  .badge {{ font-size: 9px; padding: 3px 8px; border-radius: 3px; background: #D3D3D3; color: #333; font-weight: bold; display: inline-block; margin-left: 8px; border: 1px solid #CCCCCC; white-space: nowrap; }}\n\n  .badge:empty {{ display: none; }}
 </style>
 </head>
 <body>
@@ -185,10 +217,14 @@ html = f"""
         <div class="header-banner">
           <h1>EVENT QUOTATION</h1>
           <div class="header-details">
-            <div><strong>HOST:</strong> {cust.get('Host Name', 'N/A')}</div>
-            <div><strong>DATE:</strong> {cust.get('Event Date', 'N/A')}</div>
-            <div><strong>PAX:</strong> {cust.get('Pax', 'N/A')}</div>
-            <div><strong>LOCATION:</strong> {cust.get('Location', 'N/A')}</div>
+            <div class="header-detail-row">
+              <div><strong>HOST:</strong> {cust.get('Host Name', 'N/A')}</div>
+              <div><strong>DATE:</strong> {cust.get('Event Date', 'N/A')}</div>
+            </div>
+            <div class="header-detail-row">
+              <div><strong>PAX:</strong> {cust.get('Pax', 'N/A')}</div>
+              <div><strong>LOCATION:</strong> {cust.get('Location', 'N/A')}</div>
+            </div>
           </div>
         </div>
 
@@ -206,21 +242,21 @@ for item in menu_items:
 # Generate a separate table per category (preserves first-seen category order)
 for cat, items in categories.items():
     html += f"""
-        <table class="data-table" style="margin-top: 20px; margin-bottom: 0; page-break-inside: avoid;">
+        <table class="data-table" style="margin-top: 20px; margin-bottom: 0;">
           <colgroup>
-            <col style="width:30%" />
-            <col style="width:15%" />
-            <col style="width:15%" />
-            <col style="width:20%" />
-            <col style="width:20%" />
+            <col style="width:55%" />
+            <col style="width:10%" />
+            <col style="width:10%" />
+            <col style="width:12.5%" />
+            <col style="width:12.5%" />
           </colgroup>
           <thead>
             <tr style="page-break-inside: avoid;">
-              <th style="width:30%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: left; font-size: 14px; font-weight: bold; border: 1px solid #999;">{cat.upper()}</th>
-              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PCS</th>
-              <th style="width:15%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">PORTION</th>
-              <th style="width:20%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">RATE</th>
-              <th style="width:20%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999;">AMOUNT</th>
+              <th style="width:55%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: left; font-size: 14px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">{cat.upper()}</th>
+              <th style="width:10%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">PCS</th>
+              <th style="width:10%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">PORTION</th>
+              <th style="width:12.5%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">RATE</th>
+              <th style="width:12.5%; background: #F6B27A; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">AMOUNT</th>
             </tr>
           </thead>
           <tbody>
@@ -248,10 +284,10 @@ for cat, items in categories.items():
         html += f"""
             <tr style="page-break-inside: avoid;">
               <td>
-                <strong>{d.get('Name','')}</strong> <span class='badge'>{d.get('Veg/Non Veg','')}</span>
+                <strong>{d.get('Name','')}</strong><span class='badge'>{d.get('Veg/Non Veg','').strip()}</span>
                 <span class='description'>{d.get('Description','')}</span>
               </td>
-              <td style="text-align: center;">{d.get('PcsDisplay','')}</td>
+              <td style="text-align: center;">{d.get('Pcs','')}</td>
               <td style="text-align: center;">{portions}</td>
               <td style="text-align: center;">{rate_display}</td>
               <td style="text-align: center;">{amount_display}</td>
