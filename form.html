@@ -796,11 +796,12 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
       signal: controller.signal
     })
       .then(r=>{
-        if(!r.ok) throw new Error('Network response was not ok');
+        if(!r.ok) throw new Error('Network response was not ok: '+r.status);
         return r.json();
       })
       .then(data=>{
         clearTimeout(timeoutId);
+        console.log('✓ Response received:', data);
         
         // Extract PDF URL from n8n response - handle both object and array responses
         let pdfUrl = '';
