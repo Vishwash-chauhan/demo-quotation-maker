@@ -86,53 +86,90 @@
     }
     .modal-content {
       background: white;
-      padding: 40px;
+      padding: 30px 20px;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       max-width: 500px;
-      width: 90%;
+      width: 95%;
       text-align: center;
+      max-height: 90vh;
+      overflow-y: auto;
     }
     .modal-content h2 {
       color: #2D3E50;
       margin-top: 0;
-      font-size: 24px;
+      font-size: 22px;
+      margin-bottom: 12px;
     }
     .modal-content p {
       color: #666;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.6;
-      margin: 16px 0;
+      margin: 12px 0;
     }
     .pdf-link-box {
       background: #f5f5f5;
       border: 2px solid #F6B27A;
       border-radius: 6px;
-      padding: 16px;
-      margin: 20px 0;
+      padding: 12px;
+      margin: 16px 0;
       word-break: break-all;
+      font-size: 11px;
+      max-height: 120px;
+      overflow-y: auto;
     }
     .pdf-link-box a {
       color: #2D3E50;
       font-weight: 600;
-      font-size: 12px;
+      font-size: 11px;
     }
     .modal-buttons {
       display: flex;
-      gap: 12px;
-      margin-top: 24px;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
       justify-content: center;
     }
     .modal-buttons button {
-      flex: 1;
-      padding: 10px 20px;
-      font-size: 14px;
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 13px;
+      border-radius: 6px;
     }
     .modal-buttons button.secondary {
       background: #666;
     }
     .modal-buttons button.secondary:hover {
       background: #444;
+    }
+    @media (min-width: 600px) {
+      .modal-content {
+        padding: 40px;
+        width: 90%;
+      }
+      .modal-content h2 {
+        font-size: 24px;
+      }
+      .modal-content p {
+        font-size: 14px;
+      }
+      .pdf-link-box {
+        padding: 16px;
+        font-size: 12px;
+      }
+      .pdf-link-box a {
+        font-size: 12px;
+      }
+      .modal-buttons {
+        flex-direction: row;
+        gap: 12px;
+      }
+      .modal-buttons button {
+        flex: 1;
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
     }
     .modal-buttons button.primary {
       background: #2D3E50;
