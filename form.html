@@ -258,14 +258,13 @@
     <div id="tableWrap">
       <table id="selectedTable">
         <thead>
-          <tr><th>Item Details</th><th style="width:100px">Pcs</th><th style="width:80px">Portions</th><th style="width:90px" class="col-right">Rate</th><th style="width:100px" class="col-right">Amount</th><th style="width:60px">Action</th></tr>
+          <tr><th>Item</th><th style="width:100px">Portions</th><th style="width:90px" class="col-right">Rate</th><th style="width:100px" class="col-right">Amount</th></tr>
         </thead>
         <tbody></tbody>
         <tfoot>
           <tr>
-            <td colspan="4" style="text-align: right; font-weight: bold;">Total:</td>
+            <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
             <td style="text-align: right; font-weight: bold;"><span id="totalAmount">₹0</span></td>
-            <td></td>
           </tr>
         </tfoot>
       </table>
@@ -614,7 +613,6 @@ function addItemToTable(item, idx){
   const rate = Number(item['Rate']||0);
   const pcsDisplay = item['PcsDisplay'] || '';
   tr.innerHTML = `<td><strong>${item['Name']}</strong></td>
-    <td><input class="pcsDisplay" type="text" value="${pcsDisplay}" style="width:80px;padding:6px;border:1px solid #ccc;border-radius:6px" placeholder="e.g., 100 GMS" /></td>
     <td><input class="portions" type="number" min="0" value="1" style="width:60px;padding:6px;border:1px solid #ccc;border-radius:6px" /></td>
     <td class="col-right">${formatCurrency(rate)}</td>
     <td class="col-right amount">${formatCurrency(rate)}</td>`;
@@ -648,11 +646,9 @@ function addCustomItem(){
   const tr = document.createElement('tr');
   tr.dataset.isCustom = 'true';
   tr.innerHTML = `<td><strong>${name}</strong></td>
-    <td><input class="pcsDisplay" type="text" value="${pcs}" style="width:80px;padding:6px;border:1px solid #ccc;border-radius:6px" placeholder="e.g., 100 GMS" /></td>
     <td><input class="portions" type="number" min="0" value="${portions}" style="width:60px;padding:6px;border:1px solid #ccc;border-radius:6px" /></td>
     <td class="col-right">${formatCurrency(rate)}</td>
-    <td class="col-right amount">${formatCurrency(portions * rate)}</td>
-    <td><button class="deleteBtn" style="padding:4px 8px;font-size:12px;background:#d32f2f;width:100%">Delete</button></td>`;
+    <td class="col-right amount">${formatCurrency(portions * rate)}</td>`;
   
   tr.dataset.description = desc;
   tr.dataset.rate = rate;
@@ -662,10 +658,6 @@ function addCustomItem(){
 
   // Add event listeners
   tr.querySelector('.portions').addEventListener('input', ()=>updateCustomRowAmount(tr));
-  tr.querySelector('.deleteBtn').addEventListener('click', ()=>{
-    tr.remove();
-    updateTotal();
-  });
 
   // Clear form
   document.getElementById('customName').value = '';
@@ -757,11 +749,10 @@ function collectPayload(){
     const name = tr.querySelector('td strong').textContent;
     const desc = tr.dataset.description || '';
     const portions = Number(tr.querySelector('.portions').value) || 0;
-    const pcsDisplay = tr.querySelector('.pcsDisplay').value || '';
     const rate = Number(tr.dataset.rate) || 0;
     const category = tr.dataset.category || 'Other';
     const vegNonVeg = tr.dataset.vegNonVeg || '';
-    items.push({ Name: name, Description: desc, Category: category, VegNonVeg: vegNonVeg, Portions: portions, PcsDisplay: pcsDisplay, Rate: rate, Amount: portions*rate });
+    items.push({ Name: name, Description: desc, Category: category, VegNonVeg: vegNonVeg, Portions: portions, Rate: rate, Amount: portions*rate });
   });
 
   // Format date as dd/mm/yyyy

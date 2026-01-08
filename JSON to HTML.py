@@ -221,18 +221,16 @@ for cat, items in categories.items():
         <table class="data-table" style="margin-top: 20px; margin-bottom: 0;">
           <colgroup>
             <col style="width:55%" />
-            <col style="width:10%" />
-            <col style="width:10%" />
-            <col style="width:12.5%" />
-            <col style="width:12.5%" />
+            <col style="width:15%" />
+            <col style="width:15%" />
+            <col style="width:15%" />
           </colgroup>
           <thead>
             <tr style="page-break-inside: avoid;">
               <th style="width:55%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: left; font-size: 14px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">{cat.upper()}</th>
-              <th style="width:10%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">PCS</th>
-              <th style="width:10%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">PORTION</th>
-              <th style="width:12.5%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">RATE</th>
-              <th style="width:12.5%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">AMOUNT</th>
+              <th style="width:15%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">QUANTITY</th>
+              <th style="width:15%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">RATE</th>
+              <th style="width:15%; background: #FCF0D9; color: #2D3E50; padding: 10px; text-align: center; font-size: 12px; font-weight: bold; border: 1px solid #999; -webkit-print-color-adjust: exact; print-color-adjust: exact;">AMOUNT</th>
             </tr>
           </thead>
           <tbody>
@@ -263,7 +261,6 @@ for cat, items in categories.items():
                 <strong>{d.get('Name','')}</strong><span class='badge'>{d.get('Veg/Non Veg','').strip()}</span>
                 <span class='description'>{d.get('Description','')}</span>
               </td>
-              <td style="text-align: center;">{d.get('Pcs','')}</td>
               <td style="text-align: center;">{portions}</td>
               <td style="text-align: center;">{rate_display}</td>
               <td style="text-align: center;">{amount_display}</td>
