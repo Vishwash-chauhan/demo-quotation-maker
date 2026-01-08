@@ -176,6 +176,30 @@ html = f"""
   Lajpath, New Delhi 110066 | www.reallyawesomewebsite.com | mail@gmail.com
 </div>
 
+<div class="full-page-section">
+  <img src="{logo_url}" style="height: 100px; margin-bottom: 30px;">
+  <div class="intro-text">
+    <p><strong>Welcome to [Company Name] – Your Premier Event Catering Partner, dedicated to providing exceptional culinary experiences for every occasion.</strong></p>
+    
+    <p><strong>With years of industry expertise, we specialize in making your celebrations seamless and unforgettable, whether you are hosting an intimate gathering of [Number] or a grand event with [Number] guests.</strong></p>
+    
+    <p><strong>Explore our thoughtfully curated menus designed to suit diverse tastes. We also offer custom catering solutions and would love to collaborate with you to bring your unique vision to life.</strong></p>
+    
+    <p><strong>We look forward to helping you create lasting memories through great food and impeccable service!</strong></p>
+    
+    <div style="margin-top: 50px; font-size: 14px;">
+      <p><strong>Warm Regards,<br>
+      <strong>The [Company Name] Team</strong><br>
+      [Phone Number] | [Website/Email]</strong></p>
+    </div>
+  </div>
+ </div>
+
+<div class="full-page-section">
+  <img src="{logo_url}" style="height: 80px; margin-bottom: 10px;">
+  <img src="{collage_url}" class="gallery-image">
+</div>
+
 <table class="page-container">
   <thead class="print-header">
     <tr>
@@ -346,7 +370,7 @@ html += f"""
       </ul>
 
       <div style="text-align: center; margin-top: 60px;">
-          <p style="font-weight: bold; color: #D4813E; font-size: 16px; letter-spacing: 1px;">FOLLOW US @vishwash_catering</p>
+          <p style="font-weight: bold; color: #D4813E; font-size: 16px; letter-spacing: 1px;">FOLLOW US @LITTLEJALEBIS</p>
           <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" style="height: 30px; vertical-align: middle; margin-top: 10px;">
       </div>
     </div>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Little Jalabies Quotation Maker</title>
+  <title>Your Custom Quotation Maker</title>
   <style>
     body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;padding:20px;color:#222;background:#f8f9fa}
     .container{max-width:900px;margin:0 auto;background:white;padding:24px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
@@ -213,7 +213,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Little Jalabies Quotation Maker
+    <h1>Custom Quotation Maker
     </h1>
 
   <div>
@@ -245,7 +245,7 @@
     </div>
 
     <label style="margin-top:18px"></label>
-    <input id="webhookUrl" type="hidden" value="https://n8n.vyaapaarniti.com/webhook/quotation-form" />
+    <input id="webhookUrl" type="hidden" value="https://n8n.vyaapaarniti.com/webhook/1db5807c-b1ae-4af8-a1a7-a3f79df205a8" />
     <input type="hidden" id="quoteId" value="" />
     <input type="hidden" name="x-webhook-token" id="webhookToken" value="a-string-secret-at-least-256-bits-long" />
     <p class="muted" style="margin-top:8px;"></p>
@@ -812,26 +812,16 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
   document.getElementById('statusText').textContent = 'Generating quotation PDF...';
   document.getElementById('spinner').classList.add('show');
   
-  // Check if running on localhost (for mock testing)
-  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  // Always call the n8n webhook (localhost or production)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
   
-  if (isLocalhost) {
-    // Mock response for localhost testing
-    const mockPdfUrl = `https://example.com/quotations/${payload.QuotationId || 'quotation'}_${Date.now()}.pdf`;
-    document.getElementById('statusText').textContent = 'Submitted successfully (Mock).';
-    document.getElementById('spinner').classList.remove('show');
-    showPdfModal(mockPdfUrl);
-  } else {
-    // Real n8n webhook call for production
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-    
-    fetch(url, { 
-      method:'POST', 
-      headers:{'Content-Type':'application/json', 'x-webhook-token': document.getElementById('webhookToken').value }, 
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    })
+  fetch(url, { 
+    method:'POST', 
+    headers:{'Content-Type':'application/json', 'x-webhook-token': document.getElementById('webhookToken').value }, 
+    body: JSON.stringify(payload),
+    signal: controller.signal
+  })
       .then(r=>{
         if(!r.ok) throw new Error('Network response was not ok: '+r.status);
         return r.json();
@@ -862,16 +852,41 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
           console.log('Full response:', data);
         }
       })
-      .catch(err=>{ 
-        clearTimeout(timeoutId);
+    .then(data=>{
+      clearTimeout(timeoutId);
+      console.log('✓ Response received:', data);
+      
+      // Extract PDF URL from n8n response - handle both object and array responses
+      let pdfUrl = '';
+      
+      // If response is an array, get first item
+      if (Array.isArray(data) && data.length > 0) {
+        const item = data[0];
+        pdfUrl = item.signedUrl || item.pdfUrl || item.pdf_url || item.url || '';
+      } else if (typeof data === 'object') {
+        // If response is an object
+        pdfUrl = data.signedUrl || data.pdfUrl || data.pdf_url || data.url || '';
+      }
+      
+      if (pdfUrl) {
+        document.getElementById('statusText').textContent = 'Quotation ready!';
         document.getElementById('spinner').classList.remove('show');
-        if (err.name === 'AbortError') {
-          document.getElementById('statusText').textContent = 'Request timeout (30s). n8n may be slow or offline.';
-        } else {
-          document.getElementById('statusText').textContent = 'Submit failed: '+err.message;
-        }
-      })
-  }
+        showPdfModal(pdfUrl);
+      } else {
+        document.getElementById('statusText').textContent = 'Submitted, but no PDF URL received. Check n8n response.';
+        document.getElementById('spinner').classList.remove('show');
+        console.log('Full response:', data);
+      }
+    })
+    .catch(err=>{ 
+      clearTimeout(timeoutId);
+      document.getElementById('spinner').classList.remove('show');
+      if (err.name === 'AbortError') {
+        document.getElementById('statusText').textContent = 'Request timeout (30s). n8n may be slow or offline.';
+      } else {
+        document.getElementById('statusText').textContent = 'Submit failed: '+err.message;
+      }
+    })
 });
 
 // download JSON
