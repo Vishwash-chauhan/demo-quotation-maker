@@ -107,24 +107,6 @@
       line-height: 1.6;
       margin: 10px 0;
     }
-    .pdf-link-box {
-      background: #f5f5f5;
-      border: 2px solid #F6B27A;
-      border-radius: 6px;
-      padding: 10px;
-      margin: 12px 0;
-      word-break: break-all;
-      font-size: 12px;
-      max-height: 100px;
-      overflow-y: auto;
-    }
-    .pdf-link-box a {
-      color: #2D3E50;
-      font-weight: 600;
-      font-size: 12px;
-      display: block;
-      margin-top: 8px;
-    }
     .modal-buttons {
       display: flex;
       flex-direction: column;
@@ -247,7 +229,7 @@
     </div>
 
     <label style="margin-top:18px"></label>
-    <input id="webhookUrl" type="hidden" value="https://n8n.vyaapaarniti.com/webhook/1db5807c-b1ae-4af8-a1a7-a3f79df205a8" />
+    <input id="webhookUrl" type="hidden" value="https://n8n.vyaapaarniti.com/webhook-test/1db5807c-b1ae-4af8-a1a7-a3f79df205a8" />
     <input type="hidden" id="quoteId" value="" />
     <input type="hidden" name="x-webhook-token" id="webhookToken" value="a-string-secret-at-least-256-bits-long" />
     <p class="muted" style="margin-top:8px;"></p>
@@ -386,9 +368,6 @@
     <div class="modal-content">
       <h2>✓ Quotation Generated!</h2>
       <p>Your quotation has been successfully created. Download or view it using the link below:</p>
-      <div class="pdf-link-box">
-        <a id="pdfLink" href="#" target="_blank" rel="noopener noreferrer">Click here to download PDF</a>
-      </div>
       <div class="modal-buttons">
         <button class="primary" onclick="openPdfInNewTab()">View PDF</button>
         <button class="secondary" onclick="closePdfModal()">Close</button>
@@ -802,7 +781,7 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
   const url = webhookEl.value.trim();
   if (!url){ alert('Please set the n8n Webhook URL'); return }
   const payload = collectPayload();
-  document.getElementById('statusText').textContent = 'Generating quotation PDF...';
+  document.getElementById('statusText').textContent = 'Generating quotation HTML...';
   document.getElementById('spinner').classList.add('show');
   
   // Always call the n8n webhook (localhost or production)
@@ -823,54 +802,28 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
         clearTimeout(timeoutId);
         console.log('✓ Response received:', data);
         
-        // Extract PDF URL from n8n response - handle both object and array responses
-        let pdfUrl = '';
+        // Extract HTML content from n8n response - be specific about html_content
+        let htmlContent = '';
         
-        // If response is an array, get first item
-        if (Array.isArray(data) && data.length > 0) {
-          const item = data[0];
-          pdfUrl = item.signedUrl || item.pdfUrl || item.pdf_url || item.url || '';
-        } else if (typeof data === 'object') {
-          // If response is an object
-          pdfUrl = data.signedUrl || data.pdfUrl || data.pdf_url || data.url || '';
+        // If response is an object with html_content key
+        if (typeof data === 'object' && data !== null && data.html_content) {
+          htmlContent = data.html_content;
+        } 
+        // If response is an array with first item containing html_content
+        else if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object' && data[0].html_content) {
+          htmlContent = data[0].html_content;
         }
         
-        if (pdfUrl) {
+        if (htmlContent && htmlContent.trim().length > 0) {
           document.getElementById('statusText').textContent = 'Quotation ready!';
           document.getElementById('spinner').classList.remove('show');
-          showPdfModal(pdfUrl);
+          showHtmlModal(htmlContent);
         } else {
-          document.getElementById('statusText').textContent = 'Submitted, but no PDF URL received. Check n8n response.';
+          document.getElementById('statusText').textContent = 'Submitted, but no HTML content received. Check n8n response.';
           document.getElementById('spinner').classList.remove('show');
           console.log('Full response:', data);
         }
       })
-    .then(data=>{
-      clearTimeout(timeoutId);
-      console.log('✓ Response received:', data);
-      
-      // Extract PDF URL from n8n response - handle both object and array responses
-      let pdfUrl = '';
-      
-      // If response is an array, get first item
-      if (Array.isArray(data) && data.length > 0) {
-        const item = data[0];
-        pdfUrl = item.signedUrl || item.pdfUrl || item.pdf_url || item.url || '';
-      } else if (typeof data === 'object') {
-        // If response is an object
-        pdfUrl = data.signedUrl || data.pdfUrl || data.pdf_url || data.url || '';
-      }
-      
-      if (pdfUrl) {
-        document.getElementById('statusText').textContent = 'Quotation ready!';
-        document.getElementById('spinner').classList.remove('show');
-        showPdfModal(pdfUrl);
-      } else {
-        document.getElementById('statusText').textContent = 'Submitted, but no PDF URL received. Check n8n response.';
-        document.getElementById('spinner').classList.remove('show');
-        console.log('Full response:', data);
-      }
-    })
     .catch(err=>{ 
       clearTimeout(timeoutId);
       document.getElementById('spinner').classList.remove('show');
@@ -904,9 +857,21 @@ document.getElementById('conveyance').addEventListener('input', updateSummary);
 updateSummary();
 
 // Modal Functions
-function showPdfModal(pdfUrl) {
+function showHtmlModal(htmlContent) {
+  const pdfModal = document.getElementById('pdfModal');
   const pdfLink = document.getElementById('pdfLink');
-  pdfLink.href = pdfUrl;
+  
+  // Create a container for the HTML content
+  let htmlContainer = pdfModal.querySelector('#htmlContainer');
+  if (!htmlContainer) {
+    htmlContainer = document.createElement('div');
+    htmlContainer.id = 'htmlContainer';
+    htmlContainer.style.cssText = 'width: 100%; height: 80vh; overflow: auto; border: 1px solid #ccc; margin: 20px 0; background: white;';
+    pdfModal.querySelector('.modal-content').appendChild(htmlContainer);
+  }
+  
+  htmlContainer.innerHTML = htmlContent;
+  pdfLink.style.display = 'none'; // Hide PDF link
   document.getElementById('pdfModal').classList.add('show');
 }
 
@@ -915,8 +880,13 @@ function closePdfModal() {
 }
 
 function openPdfInNewTab() {
-  const pdfUrl = document.getElementById('pdfLink').href;
-  window.open(pdfUrl, '_blank');
+  const htmlContainer = document.getElementById('pdfModal').querySelector('#htmlContainer');
+  if (htmlContainer) {
+    // Create a new window and write the HTML to it
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(htmlContainer.innerHTML);
+    newWindow.document.close();
+  }
 }
 
 // Close modal when clicking outside of it
